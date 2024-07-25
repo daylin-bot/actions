@@ -1,0 +1,35 @@
+name: 'Commit and Push w/daylin-bot'
+description: 'commit and push changes as daylin-bot'
+
+inputs:
+  message:
+    description: commit message
+    required: true
+  push-args:
+    description: "arguments passed to git push"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Bot
+      shell: bash
+      run: |
+        git --version
+        git config user.name 'daylin-bot'
+        git config user.email 'bot@dayl.in'
+
+    - name: Commit Updates
+      shell: bash
+      run: |
+        if [[ -n "$(git status --porcelain)" ]]; then
+          git add -A
+          git commit -m "${{ inputs.message }}"
+        fi
+
+    - name: Push Updates
+      shell: bash
+      run: |
+        git push ${{ inputs.push-args }}
+
